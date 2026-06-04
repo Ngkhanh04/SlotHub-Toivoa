@@ -1,0 +1,30 @@
+{
+  "short_name": "SlotHub",
+  "name": "SlotHub — Đặt món FPT Canteen",
+  "description": "Nền tảng đặt đồ ăn canteen FPT — chọn giờ nhận, thanh toán nhanh, quét mã lấy món.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "logo-mark.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#F27124",
+  "background_color": "#F9FAFB",
+  "lang": "vi"
+}

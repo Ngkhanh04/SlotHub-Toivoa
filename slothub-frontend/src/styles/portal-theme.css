@@ -1,0 +1,189 @@
+/* Portal (Admin + Vendor) theme tokens */
+.portal-app[data-portal-theme='dark'] {
+  --portal-bg: #0b1121;
+  --portal-sidebar: #111827;
+  --portal-header: rgba(17, 24, 39, 0.85);
+  --portal-card: #1e293b;
+  --portal-surface: #1f2937;
+  --portal-surface-hover: rgba(31, 41, 55, 0.55);
+  --portal-border: #1f2937;
+  --portal-border-soft: rgba(31, 41, 55, 0.6);
+  --portal-text: #ffffff;
+  --portal-text-secondary: #e5e7eb;
+  --portal-muted: #9ca3af;
+  --portal-input-bg: #111827;
+  --portal-scrollbar: #374151;
+  --portal-scrollbar-hover: #4b5563;
+  --portal-table-head: rgba(17, 24, 39, 0.5);
+  --portal-badge-border: #111827;
+  --portal-chart-grid: #334155;
+  --portal-empty-border: #1f2937;
+}
+
+.portal-app[data-portal-theme='light'] {
+  --portal-bg: #f1f5f9;
+  --portal-sidebar: #ffffff;
+  --portal-header: rgba(255, 255, 255, 0.92);
+  --portal-card: #ffffff;
+  --portal-surface: #f8fafc;
+  --portal-surface-hover: #f1f5f9;
+  --portal-border: #e2e8f0;
+  --portal-border-soft: #e2e8f0;
+  --portal-text: #0f172a;
+  --portal-text-secondary: #334155;
+  --portal-muted: #64748b;
+  --portal-input-bg: #f8fafc;
+  --portal-scrollbar: #cbd5e1;
+  --portal-scrollbar-hover: #94a3b8;
+  --portal-table-head: #f8fafc;
+  --portal-badge-border: #ffffff;
+  --portal-chart-grid: #e2e8f0;
+  --portal-empty-border: #cbd5e1;
+}
+
+.portal-app {
+  color: var(--portal-text);
+  background-color: var(--portal-bg);
+  transition: background-color 0.25s ease, color 0.2s ease;
+}
+
+.portal-app .portal-sidebar {
+  background-color: var(--portal-sidebar);
+  border-color: var(--portal-border-soft);
+}
+
+.portal-app .portal-header {
+  background-color: var(--portal-header);
+  border-color: var(--portal-border-soft);
+  backdrop-filter: blur(12px);
+}
+
+.portal-app .portal-main-scroll {
+  background-color: var(--portal-bg);
+}
+
+.portal-app .portal-card {
+  background-color: var(--portal-card);
+  border: 1px solid var(--portal-border);
+  color: var(--portal-text);
+}
+
+.portal-app .portal-input {
+  background-color: var(--portal-input-bg);
+  border-color: var(--portal-border);
+  color: var(--portal-text);
+}
+
+.portal-app .portal-tooltip {
+  background-color: var(--portal-card);
+  border: 1px solid var(--portal-border);
+  color: var(--portal-text);
+}
+
+.portal-app[data-portal-theme='light'] .portal-on-light-text {
+  color: var(--portal-text);
+}
+
+.portal-app .portal-muted {
+  color: var(--portal-muted);
+}
+
+.portal-app .portal-text-secondary {
+  color: var(--portal-text-secondary);
+}
+
+.portal-app .portal-menu-btn {
+  color: var(--portal-muted);
+  border-left-color: transparent;
+}
+
+.portal-app .portal-menu-btn:hover {
+  color: var(--portal-text);
+  background-color: var(--portal-surface-hover);
+}
+
+.portal-app .portal-menu-btn-active {
+  color: var(--portal-text);
+  background: linear-gradient(to right, rgba(242, 113, 36, 0.12), transparent);
+  border-left-color: #f27124;
+}
+
+.portal-app .portal-icon-btn {
+  background-color: var(--portal-surface);
+  border-color: var(--portal-border);
+  color: var(--portal-muted);
+}
+
+.portal-app .portal-icon-btn:hover {
+  background-color: var(--portal-surface-hover);
+  color: var(--portal-text);
+}
+
+.portal-app .portal-icon-btn-active {
+  background-color: #f27124;
+  border-color: #f27124;
+  color: #fff;
+}
+
+.portal-app .portal-external-btn {
+  color: var(--portal-text-secondary);
+  background-color: var(--portal-surface);
+  border-color: var(--portal-border);
+}
+
+.portal-app[data-portal-theme='light'] .portal-external-btn:hover {
+  background-color: #f27124;
+  color: #fff;
+  border-color: #f27124;
+}
+
+.portal-app[data-portal-theme='dark'] .portal-external-btn:hover {
+  background-color: #fff;
+  color: #111827;
+  border-color: #fff;
+}
+
+.portal-app .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--portal-scrollbar);
+}
+
+.portal-app .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--portal-scrollbar-hover);
+}
+
+/* Form controls inside portal */
+.portal-app input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='color']):not([type='range']),
+.portal-app select,
+.portal-app textarea {
+  color: var(--portal-text);
+}
+
+.portal-app .portal-card input:not([type='checkbox']):not([type='radio']),
+.portal-app .portal-card select,
+.portal-app .portal-card textarea,
+.portal-app .portal-input {
+  background-color: var(--portal-input-bg);
+  border-color: var(--portal-border);
+}
+
+.portal-app input[type='time'],
+.portal-app input[type='date'] {
+  color-scheme: light;
+  min-height: 3rem;
+}
+
+.portal-app[data-portal-theme='dark'] input[type='time'],
+.portal-app[data-portal-theme='dark'] input[type='date'] {
+  color-scheme: dark;
+}
+
+/* Nút cam chính — luôn chữ trắng (cả theme sáng/tối) */
+.portal-app button[class*='bg-[#F27124]']:not([class*='/']),
+.portal-app a[class*='bg-[#F27124]']:not([class*='/']) {
+  color: #ffffff;
+}
+
+.portal-app button[class*='hover:bg-[#F27124]']:hover,
+.portal-app a[class*='hover:bg-[#F27124]']:hover {
+  color: #ffffff;
+}
