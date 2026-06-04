@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.css": "/slothub-frontend/static/css/main.f93bea59.css",
+    "main.js": "/slothub-frontend/static/js/main.e7132033.js",
+    "static/js/206.a623d2b4.chunk.js": "/slothub-frontend/static/js/206.a623d2b4.chunk.js",
+    "index.html": "/slothub-frontend/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.f93bea59.css",
+    "static/js/main.e7132033.js"
+  ]
+}

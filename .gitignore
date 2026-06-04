@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+slothub-backend/node_modules/
+slothub-frontend/node_modules/
+
+# Local Environment Variables
+.env
+slothub-backend/.env
+slothub-frontend/.env
+
+# Production builds
+build/
+slothub-frontend/build/
+
+# Misc
+.DS_Store
+*.log

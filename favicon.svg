@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SlotHub">
+  <defs>
+    <linearGradient id="slotGrad" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff985e"/>
+      <stop offset="100%" stop-color="#D95F1B"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#slotGrad)"/>
+  <path fill="#fff" fill-opacity="0.95" d="M18 30h28c0 9-6.2 15-14 15s-14-6-14-15zm0 0c0-7 6.2-12 14-12s14 5 14 12H18z"/>
+  <path stroke="#fff" stroke-width="2.8" stroke-linecap="round" fill="none" d="M24 24v-5M32 21v-8M40 24v-5"/>
+  <circle cx="48" cy="18" r="5" fill="#fff" fill-opacity="0.35"/>
+</svg>

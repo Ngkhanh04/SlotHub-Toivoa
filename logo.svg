@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 56" role="img" aria-label="SlotHub FPT Canteen">
+  <defs>
+    <linearGradient id="iconGrad" x1="4" y1="4" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff985e"/>
+      <stop offset="100%" stop-color="#D95F1B"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="72" y1="12" x2="200" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F27124"/>
+      <stop offset="100%" stop-color="#D95F1B"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="48" height="48" rx="14" fill="url(#iconGrad)"/>
+  <path fill="#fff" fill-opacity="0.95" d="M14 28h28c0 8-5.5 13-14 13s-14-5-14-13zm0 0c0-6.5 6-11 14-11s14 4.5 14 11H14z"/>
+  <path stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" d="M20 23v-4M28 20v-7M36 23v-4"/>
+  <text x="64" y="36" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="800" fill="#111827">Slot</text>
+  <text x="128" y="36" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="800" fill="url(#textGrad)">Hub</text>
+  <text x="64" y="50" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="9" font-weight="700" fill="#9CA3AF" letter-spacing="0.12em">FPT CANTEEN</text>
+</svg>
