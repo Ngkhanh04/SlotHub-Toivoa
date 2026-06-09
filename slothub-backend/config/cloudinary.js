@@ -14,7 +14,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'Slothub', // Ảnh sẽ tự động chui vào thư mục này trên Cloudinary
+    folder: 'PetCareHub', // Ảnh sẽ tự động chui vào thư mục này trên Cloudinary
     allowedFormats: ['jpeg', 'png', 'jpg'] // Chỉ cho phép up ảnh
   }
 });

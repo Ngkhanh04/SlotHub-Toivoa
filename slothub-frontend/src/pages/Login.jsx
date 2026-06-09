@@ -16,6 +16,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
   /** login | register | forgot | reset */
   const [partnerView, setPartnerView] = useState('login');
   const [resetToken, setResetToken] = useState('');
@@ -95,7 +96,6 @@ const Login = () => {
         role: 'vendor_owner' 
       });
       
-      // 🌟 ĐÃ SỬA THÔNG BÁO Ở ĐÂY
       alert('🎉 Đăng ký mở quầy thành công! Yêu cầu của bạn đang chờ Admin phê duyệt. Vui lòng quay lại đăng nhập sau nhé!');
       setPartnerView('login');
       setEmail(regData.regEmail);
@@ -146,10 +146,10 @@ const Login = () => {
     clearMessages();
 
     if (newPassword !== confirmNewPassword) {
-      return setError(t('login.passwordMismatch'));
+      return setError(t('login.passwordMismatch') || 'Mật khẩu xác nhận không khớp!');
     }
     if (newPassword.length < 6) {
-      return setError(t('login.passwordMin'));
+      return setError(t('login.passwordMin') || 'Mật khẩu phải có ít nhất 6 ký tự!');
     }
     if (!/^\d{6}$/.test(resetToken.trim())) {
       return setError('Mã xác nhận phải đủ 6 chữ số.');
@@ -175,10 +175,10 @@ const Login = () => {
   };
 
   const partnerTitles = {
-    login: { title: 'Xin chào! 👋', subtitle: 'Nền tảng đặt đồ ăn nhanh chóng & tiện lợi dành riêng cho hệ sinh thái FPT.' },
-    register: { title: 'Hợp tác cùng SlotHub 🚀', subtitle: 'Đăng ký gian hàng ngay hôm nay để tiếp cận hàng ngàn sinh viên FPT.' },
-    forgot: { title: t('login.forgotTitle'), subtitle: t('login.forgotSubtitle') },
-    reset: { title: t('login.resetTitle'), subtitle: t('login.resetSubtitle') }
+    login: { title: 'Xin chào! 👋', subtitle: 'Nền tảng đặt đồ ăn nhanh chóng & tiện lợi dành cho sinh viên và khách hàng.' },
+    register: { title: 'Hợp tác cùng SlotHub 🚀', subtitle: 'Đăng ký gian hàng ngay hôm nay để tiếp cận hàng ngàn khách hàng.' },
+    forgot: { title: t('login.forgotTitle') || 'Khôi phục mật khẩu', subtitle: t('login.forgotSubtitle') || 'Nhập email để nhận mã xác nhận' },
+    reset: { title: t('login.resetTitle') || 'Tạo mật khẩu mới', subtitle: t('login.resetSubtitle') || 'Nhập mã gồm 6 chữ số' }
   };
   const { title: pageTitle, subtitle: pageSubtitle } = partnerTitles[partnerView] || partnerTitles.login;
 
@@ -218,11 +218,12 @@ const Login = () => {
           {partnerView === 'login' ? (
             <div className="animate-in fade-in slide-in-from-left-4 duration-300">
               <div className="mb-8">
+                {/* 🌟 ĐÃ ÉP CỨNG CHỮ Ở ĐÂY, GỠ BỎ HÀM T() 🌟 */}
                 <button type="button" onClick={() => loginWithGoogle()} disabled={isLoading} className="w-full flex justify-center items-center py-4 bg-white border border-gray-200 shadow-sm rounded-2xl hover:bg-gray-50 font-black text-gray-700 transition-all duration-300 disabled:opacity-50 hover:shadow-md active:scale-95">
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="h-6 w-6 mr-3" alt="Google" /> 
-                  {t('login.googleBtn')}
+                  Đăng nhập bằng tài khoản Google
                 </button>
-                <p className="text-center text-xs text-gray-400 font-medium mt-3">{t('login.studentSubtitle')}</p>
+                <p className="text-center text-xs text-gray-400 font-medium mt-3">Dành cho Sinh viên & Khách hàng</p>
               </div>
 
               <div className="relative mb-8">
@@ -254,7 +255,7 @@ const Login = () => {
                       onClick={() => switchPartnerView('forgot')}
                       className="text-xs font-bold text-[#F27124] hover:underline"
                     >
-                      {t('login.forgotPassword')}
+                      {t('login.forgotPassword') || 'Quên mật khẩu?'}
                     </button>
                   </div>
                 </div>
@@ -293,14 +294,14 @@ const Login = () => {
                   disabled={isLoading}
                   className="w-full bg-[#F27124] text-white font-black py-4 rounded-xl shadow-lg shadow-orange-500/30 hover:bg-[#D95F1B] transition-all flex justify-center items-center gap-2 disabled:opacity-50 active:scale-95"
                 >
-                  {isLoading ? <Loader2 className="animate-spin" size={20} /> : <><KeyRound size={18} /> {t('login.sendResetCode')}</>}
+                  {isLoading ? <Loader2 className="animate-spin" size={20} /> : <><KeyRound size={18} /> {t('login.sendResetCode') || 'Gửi mã khôi phục'}</>}
                 </button>
                 <button
                   type="button"
                   onClick={() => switchPartnerView('login')}
                   className="w-full flex items-center justify-center gap-2 text-sm font-bold text-gray-600 hover:text-gray-900 py-2"
                 >
-                  <ArrowLeft size={16} /> {t('login.backToLogin')}
+                  <ArrowLeft size={16} /> {t('login.backToLogin') || 'Quay lại đăng nhập'}
                 </button>
               </form>
             </div>
@@ -311,7 +312,7 @@ const Login = () => {
                   Mã gửi tới: <strong className="text-gray-800">{email}</strong>
                 </p>
                 <div>
-                  <label className="block text-xs font-bold text-gray-600 mb-1.5 ml-1">{t('login.resetCode')}</label>
+                  <label className="block text-xs font-bold text-gray-600 mb-1.5 ml-1">{t('login.resetCode') || 'Mã xác nhận (6 số)'}</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <KeyRound className="h-5 w-5 text-gray-400 group-focus-within:text-[#F27124] transition-colors" />
@@ -329,7 +330,7 @@ const Login = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-600 mb-1.5 ml-1">{t('login.newPassword')}</label>
+                  <label className="block text-xs font-bold text-gray-600 mb-1.5 ml-1">{t('login.newPassword') || 'Mật khẩu mới'}</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#F27124] transition-colors" />
@@ -353,7 +354,7 @@ const Login = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-600 mb-1.5 ml-1">{t('login.confirmNewPassword')}</label>
+                  <label className="block text-xs font-bold text-gray-600 mb-1.5 ml-1">{t('login.confirmNewPassword') || 'Xác nhận lại mật khẩu'}</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#F27124] transition-colors" />
@@ -374,7 +375,7 @@ const Login = () => {
                   disabled={isLoading}
                   className="w-full bg-gray-900 text-white font-black py-4 rounded-xl shadow-lg hover:bg-black transition-all flex justify-center items-center gap-2 disabled:opacity-50 active:scale-95"
                 >
-                  {isLoading ? <Loader2 className="animate-spin" size={20} /> : t('login.resetSubmit')}
+                  {isLoading ? <Loader2 className="animate-spin" size={20} /> : t('login.resetSubmit') || 'Lưu mật khẩu mới'}
                 </button>
                 <button
                   type="button"
@@ -388,7 +389,7 @@ const Login = () => {
                   onClick={() => switchPartnerView('login')}
                   className="w-full flex items-center justify-center gap-2 text-sm font-bold text-gray-600 hover:text-gray-900 py-2"
                 >
-                  <ArrowLeft size={16} /> {t('login.backToLogin')}
+                  <ArrowLeft size={16} /> {t('login.backToLogin') || 'Quay lại đăng nhập'}
                 </button>
               </form>
             </div>
@@ -460,7 +461,7 @@ const Login = () => {
                 <img src={`${process.env.PUBLIC_URL}/logo-mark.svg`} alt="SlotHub" className="w-12 h-12 mb-6 drop-shadow-lg" />
                 <h3 className="text-3xl font-black mb-3 leading-tight">Hương vị đích thực,<br/>Giao tận tay bạn.</h3>
                 <p className="text-gray-300 leading-relaxed font-medium text-sm w-5/6">
-                  Trải nghiệm ẩm thực tuyệt vời được giao ngay đến tận lớp học của bạn chỉ với vài cú chạm. Tránh xa hàng dài chờ đợi, tập trung vào việc học!
+                  Trải nghiệm ẩm thực tuyệt vời được giao ngay đến bạn chỉ với vài cú chạm. Tránh xa hàng dài chờ đợi!
                 </p>
                 <div className="flex gap-3 mt-6">
                   <span className="bg-white/20 border border-white/10 px-4 py-1.5 rounded-full text-xs font-bold backdrop-blur-md">🚀 Nhanh chóng</span>

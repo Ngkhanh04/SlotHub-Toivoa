@@ -13,7 +13,7 @@ const sendEmail = async (options) => {
 
   // Nội dung bức thư
   const mailOptions = {
-    from: `Slot-hub <${process.env.EMAIL_USER}>`,
+    from: `PetCare Hub <${process.env.EMAIL_USER}>`,
     to: options.email,
     subject: options.subject,
     text: options.message, // Vẫn giữ lại để luồng Quên mật khẩu cũ chạy bình thường

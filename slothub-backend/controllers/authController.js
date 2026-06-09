@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const Vendor = require('../models/Vendor'); 
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
@@ -13,29 +12,35 @@ const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
+// ==========================================
+// 1. API ĐĂNG KÝ (REGISTER)
+// ==========================================
 const register = async (req, res) => {
   try {
     const { email, password, name, phone } = req.body; 
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'Email này đã được sử dụng!' });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const newUser = new User({ email, password: hashedPassword, name, phone });
+    // KHÔNG cần dùng bcrypt ở đây nữa, Model sẽ tự băm password thông qua pre('save')
+    const newUser = new User({ email, password, name, phone });
     await newUser.save();
+
     await notifyAdmin(req, {
       title: 'Tài khoản mới đăng ký',
       message: `${name || email} vừa đăng ký tài khoản (${email})`,
       type: 'NEW_USER',
       actionLink: 'users'
     });
+
     res.status(201).json({ message: '🎉 Đăng ký tài khoản SlotHub thành công!' });
   } catch (error) {
     res.status(500).json({ message: 'Lỗi server', error: error.message });
   }
 };
 
+// ==========================================
+// 2. API ĐĂNG NHẬP (LOGIN)
+// ==========================================
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -44,11 +49,12 @@ const login = async (req, res) => {
         return res.status(400).json({ message: 'Vui lòng nhập Email và Mật khẩu!' });
     }
 
+    // Phải thêm .select('+password') để lấy trường password bị ẩn
     const user = await User.findOne({ email }).select('+password');
     if (!user) return res.status(401).json({ message: 'Tài khoản không tồn tại trong hệ thống!' });
 
     if (user.role === 'student') {
-        return res.status(403).json({ message: 'CẢNH BÁO: Sinh viên vui lòng đăng nhập bằng nút Google FPT!' });
+        return res.status(403).json({ message: 'CẢNH BÁO: Sinh viên vui lòng đăng nhập bằng nút Google!' });
     }
 
     // 🌟 CHỐT CHẶN: Chặn Vendor chưa được Admin duyệt
@@ -60,7 +66,8 @@ const login = async (req, res) => {
         return res.status(400).json({ message: 'Tài khoản này chưa được thiết lập mật khẩu. Vui lòng liên hệ Admin!' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // So sánh mật khẩu bằng hàm đã viết sẵn trong Model
+    const isMatch = await user.matchPassword(password);
     if (!isMatch) return res.status(401).json({ message: 'Sai mật khẩu!' });
 
     const token = generateToken(user._id, user.role);
@@ -86,6 +93,9 @@ const login = async (req, res) => {
   }
 };
 
+// ==========================================
+// 3. API ĐĂNG NHẬP GOOGLE (Đã mở khóa mọi email)
+// ==========================================
 const googleLogin = async (req, res) => {
   try {
     const { access_token } = req.body; 
@@ -102,15 +112,14 @@ const googleLogin = async (req, res) => {
     if (!email) return res.status(400).json({ message: 'Không lấy được email từ Google!' });
     if (!email_verified) return res.status(400).json({ message: 'Email Google chưa được xác minh!' });
     
-    if (!email.endsWith('@fpt.edu.vn')) {
-        return res.status(403).json({ message: 'Truy cập bị từ chối! Vui lòng sử dụng email @fpt.edu.vn' });
-    }
+    // 🌟 ĐÃ XÓA CHECK ĐUÔI @fpt.edu.vn Ở ĐÂY ĐỂ CHO PHÉP MỌI GMAIL 🌟
 
     let user = await User.findOne({ email });
     let isNewUser = false;
 
     if (user) {
       user.avatar = picture; 
+      if (!user.googleId) user.googleId = googleId;
       await user.save();
     } else {
       isNewUser = true;
@@ -148,6 +157,9 @@ const googleLogin = async (req, res) => {
   }
 };
 
+// ==========================================
+// 4. API QUÊN MẬT KHẨU (Gửi mã OTP 6 số)
+// ==========================================
 const PARTNER_RESET_ROLES = ['vendor', 'vendor_owner', 'admin'];
 
 const forgotPassword = async (req, res) => {
@@ -157,7 +169,6 @@ const forgotPassword = async (req, res) => {
       return res.status(400).json({ message: 'Vui lòng nhập email đăng nhập!' });
     }
 
-    // password / reset fields có select:false — phải .select('+...') mới đọc/ghi đúng
     const user = await User.findOne({ email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') })
       .select('+password +resetPasswordToken +resetPasswordExpire');
 
@@ -166,9 +177,7 @@ const forgotPassword = async (req, res) => {
     }
 
     if (user.role === 'student') {
-      return res.status(400).json({
-        message: 'Tài khoản sinh viên đăng nhập bằng Google (@fpt.edu.vn), không dùng mật khẩu email.'
-      });
+      return res.status(400).json({ message: 'Tài khoản sinh viên đăng nhập bằng Google, không dùng mật khẩu email.' });
     }
 
     if (!PARTNER_RESET_ROLES.includes(user.role)) {
@@ -176,19 +185,19 @@ const forgotPassword = async (req, res) => {
     }
 
     if (!user.password) {
-      return res.status(400).json({
-        message: 'Tài khoản chưa có mật khẩu. Vui lòng liên hệ Admin để được cấp lại.'
-      });
+      return res.status(400).json({ message: 'Tài khoản chưa có mật khẩu. Vui lòng liên hệ Admin để được cấp lại.' });
     }
 
+    // Tạo mã OTP 6 chữ số
     const resetToken = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-    await user.save();
+    
+    // Lưu lại bỏ qua validate để update token mượt hơn
+    await user.save({ validateBeforeSave: false });
 
-    const roleLabel =
-      user.role === 'admin' ? 'Quản trị' : 'Chủ quầy';
+    const roleLabel = user.role === 'admin' ? 'Quản trị' : 'Chủ quầy';
     const message = `Chào ${user.name || 'bạn'},\n\nBạn vừa yêu cầu khôi phục mật khẩu SlotHub (${roleLabel}).\n\nMã xác nhận: ${resetToken}\n\nMã có hiệu lực 15 phút. Nếu bạn không yêu cầu, hãy bỏ qua email này.`;
 
     await sendEmail({
@@ -204,6 +213,9 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// ==========================================
+// 5. API ĐẶT LẠI MẬT KHẨU
+// ==========================================
 const resetPassword = async (req, res) => {
   try {
     const { resetToken, newPassword } = req.body;
@@ -215,10 +227,10 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'Mật khẩu mới phải có ít nhất 6 ký tự.' });
     }
 
-    const resetPasswordToken = crypto.createHash('sha256').update(String(resetToken).trim()).digest('hex');
+    const hashedToken = crypto.createHash('sha256').update(String(resetToken).trim()).digest('hex');
 
     const user = await User.findOne({
-      resetPasswordToken,
+      resetPasswordToken: hashedToken,
       resetPasswordExpire: { $gt: Date.now() }
     }).select('+password +resetPasswordToken +resetPasswordExpire');
 
@@ -230,9 +242,8 @@ const resetPassword = async (req, res) => {
       return res.status(403).json({ message: 'Không thể đặt lại mật khẩu cho loại tài khoản này.' });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-
+    // KHÔNG cần băm password thủ công, chỉ cần gán và save, Model sẽ tự xử lý
+    user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
@@ -243,6 +254,9 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// ==========================================
+// 6. API ĐĂNG KÝ QUẦY (VENDOR)
+// ==========================================
 const registerVendor = async (req, res) => {
   try {
     const { name, vendorName, email, password } = req.body;
@@ -252,14 +266,11 @@ const registerVendor = async (req, res) => {
       return res.status(400).json({ message: 'Email này đã được đăng ký trong hệ thống!' });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // 🌟 TẠO USER CHỦ QUẦY: ÉP CỜ isApproved LÀ FALSE ĐỂ CHỜ DUYỆT
+    // 🌟 KHÔNG CẦN BĂM MẬT KHẨU THỦ CÔNG - TẠO USER ÉP CỜ CHỜ DUYỆT
     const newOwner = new User({
       name,
       email,
-      password: hashedPassword,
+      password, // Chuyển thẳng, Model lo băm
       role: 'vendor_owner',
       isApproved: false 
     });
